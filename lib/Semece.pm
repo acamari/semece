@@ -83,7 +83,7 @@ serv
 		# (send he to the post dir)
 
 		print STDERR "301'ing;\n";
-		return &rdr($q, ($q->location. "/post/"));
+		return &rdr($q, (&g_location($q). "/post/"));
 	}
 }
 
@@ -94,38 +94,14 @@ g_suri
 {
 	my $q		= shift;
 
-	my $location	= undef;	# current location
 	my $uri		= undef;	# stores short uri
 
-	$location = $q->location;
-	$location =~ s!/+!/!g;	# normalization
-	$location =~ s!/$!!;
-
-	$uri = substr $q->uri, (length $location);
+	$uri = substr $q->uri, (length &g_location($q));
 	$uri =~ s!/+!/!g;	# normalization
 
-	print STDERR "g_suri: da location (", $location, ")\n";
 	print STDERR "g_suri: da suri (", $uri, ")\n";
 
 	return $uri;
-}
-
-# returns current working dir according to apache PerlSetVar SemeceCwd
-# (this means the top dir of the source code)
-sub
-g_cwd
-{
-	my $q		= shift;
-
-	# reads Current Working Dir from apache configuration
-	if (my $tmp = $q->dir_config('SemeceCwd')) {
-		return $tmp;
-	} else {
-		print STDERR "keys:", (join(',', keys %ENV)), "\n";
-		croak "I cannot get SemeceCwd, stopped";
-		return undef;	# NOTREACHED
-	}
-	# NOTREACHED
 }
 
 # returns the postd (fs directory where the posts are)
@@ -154,8 +130,10 @@ g_location
 {
 	my $q		= shift;
 
+
 	# reads Current Working Dir from apache configuration
 	if (my $tmp = $q->location) {
+		print STDERR "g_location: location ($tmp)\n";
 		# sends directory names without final slash
 		$tmp =~ s!/+$!!;	
 		return $tmp;
@@ -271,7 +249,7 @@ gen_menu
 		(join ('', 
 		map {qq!<li id="menu">$_</li><br />\n!}
 		map {if ($q->uri eq $menu{$_}) { 
-			qq!<a href="$menu{$_}">$_<span class="here"> _</span></a>!;
+			qq!$_<span class="here"> _</span>!;
 			} else {qq!<a href="$menu{$_}">$_</a>!}}
 		 sort keys %menu)). '</ul>';
 	return $html;
@@ -306,7 +284,7 @@ p_post
 		$q->send_http_header();
 
 		# if you requested the parsing of a markdown
-		print &Semece::Temp::temp(based => $q->location, 
+		print &Semece::Temp::temp(based => &g_location($q), 
 				menu	=> &gen_menu($q, &g_postd($q)),
 				content => (markdown(join '', <$fd>)));
 
