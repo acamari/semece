@@ -258,7 +258,7 @@ gen_menu
 	    # if you see a file called /dir/index.mkd just show /dir/
 	    map {s!(^|/)index$mk_sufx$!$1!; $_}
 	    # show only non directories
-	    grep {!m!/$!}
+	    grep {!m!/$! and !m!^.git!}
 	    # removes top dir name
 	    map {$_ = substr $_, (length $dir); s!^/+!!; $_} @tmp;
 
