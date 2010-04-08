@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# gen_httpd_conf: generates a simple apache configuration
+
+# url that the user should point to to run this program
+# default: http://example.com/~the00z/sentx.net
+
+location="/~the00z/sentx.net"
+pwd=`pwd`
+postd=`pwd`/../semece.postd
+
+cat <<END
+<Location $location >
+	SetHandler	perl-script
+	PerlRequire	$pwd/startup.pl
+	PerlHandler	Semece
+	# stores top source code dir
+	PerlSetVar	SemeceCwd	$pwd
+	PerlSetVar	SemecePostd	$postd
+	Options		+ExecCGI
+</Location>
+END
