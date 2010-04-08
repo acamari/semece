@@ -15,7 +15,6 @@ cat <<END
 	PerlRequire	$pwd/startup.pl
 	PerlHandler	Semece
 	# stores top source code dir
-	PerlSetVar	SemeceCwd	$pwd
 	PerlSetVar	SemecePostd	$postd
 	Options		+ExecCGI
 </Location>
