@@ -22,6 +22,7 @@ cat <<END
 # this is needed to fetch the static/* files
 Alias ${location}static $pwd/static
 <Location $location >
+	AddDefaultCharset	UTF-8
 	SetHandler	perl-script
 	PerlRequire	$pwd/startup.pl
 	PerlHandler	Semece
