@@ -15,6 +15,10 @@ location="${location}/"
 location=`echo "$location" | perl -lpe 's!/+$!/!g'`
 
 cat <<END
+# I STRONGLY encourage you to put this section inside a 
+# <VirtualHost *> </VirtualHost>
+# if you don't do it that way, then you deserve what you get
+
 # this is needed to fetch the static/* files
 Alias ${location}static $pwd/static
 <Location $location >
