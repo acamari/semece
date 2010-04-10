@@ -9,7 +9,14 @@ location="/~the00z/sentx.net"
 pwd=`pwd`
 postd=`pwd`/../semece.postd
 
+location="${location}/"
+
+# changes multiple trailing / to just one /
+location=`echo "$location" | perl -lpe 's!/+$!/!g'`
+
 cat <<END
+# this is needed to fetch the static/* files
+Alias ${location}static $pwd/static
 <Location $location >
 	SetHandler	perl-script
 	PerlRequire	$pwd/startup.pl
