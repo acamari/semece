@@ -1,2 +1,4 @@
 fix MIME type obtention in g_postp().
+	return the file if it isn't a post
 we need to calculate it by ourselves since $q->filename makes apache lazy.
+Show only 1 level bellow the current page in the menu
