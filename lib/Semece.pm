@@ -110,7 +110,7 @@ g_postd
 {
 	my $q		= shift;
 
-	# reads Current Working Dir from apache configuration
+	# reads SemecePostd from apache configuration
 	if (my $tmp = $q->dir_config('SemecePostd')) {
 		# sends directory names without final slash
 		$tmp =~ s!/+$!!;	
@@ -165,15 +165,8 @@ g_postp
 	print STDERR "g_postp: uri = (", $uri , ")\n";
 
 	# XXX: markdown obtention heuristics...
-	# if you requested a markdown file source code
-	if ($uri =~ m!$mk_sufx$!) {
-		print STDERR "g_postp: path = (", $postd. "/". $uri, ")\n";
-		if (-e ($postd. "/". $uri)) {
-			return $postd. "/". $uri;
-		} else {
-			return undef;
-		}
-	} elsif ($uri =~ m!/$!) {
+	# XXX: we do the fucking uri -> filename translation here... nasty
+	if ($uri =~ m!/$!) {
 		# if he requested a directory
 		# see if there exits index.mkd in that directory
 		print STDERR "g_postp: path = (", $postd. "/". $uri. "/". 
@@ -184,8 +177,11 @@ g_postp
 			return undef;
 		}
 	} elsif ($uri !~ m!\..+$!) {
-		# if you requested something else without prefix
+		# if you requested something without prefix
 		# see if there exists an according markdown
+		# ej: if /post/helloworld check if /post/helloword.mkd exists
+		print STDERR "g_postp: path = (", $postd. "/". $uri. "/".
+			$mk_sufx, ")\n";
 		if (-e ($postd. "/". $uri. $mk_sufx )) {
 			return $postd. "/". $uri. $mk_sufx;
 		} else {
@@ -193,6 +189,13 @@ g_postp
 			return undef;
 		}
 	} else {
+		# if you requested something with prefix 
+		# do uri -> filename translation and return the corresponding
+		# shit, to this request
+		print STDERR "g_postp: path_info = (", $q->path_info(undef), ")\n";
+		print STDERR "g_postp: path = (", ($postd. $uri), ")\n";
+
+		$q->filename($postd. $uri);
 		return undef;
 	}
 	# NOTREACHED
@@ -266,29 +269,22 @@ p_post
 	my $fd		= undef;	# file descriptor
 	my $post	= undef;	# post (.markdown) to show
 
-	print STDERR "p_post: uri(", $q->uri , ")\n";
-	print STDERR "p_post: post(", &g_postp($q) , ")\n";
 	$post = &g_postp($q);
+
+	print STDERR "p_post: uri(", $q->uri , ")\n";
+	print STDERR "p_post: post(", ($post ? $post : ""), ")\n";
 
 	return DECLINED unless $post; # i couldn't find a filename
 
 	open $fd, "<", $post or croak "$!, stopped";
 
-	# if you requested a markdown source code
-	if ($q->uri =~ m!$mk_sufx$!) {
-		$q->content_type($ctplain);
-		$q->send_http_header();
-		print (join '', <$fd>);
-	} else {
-		$q->content_type($cthtml);
-		$q->send_http_header();
+	$q->content_type($cthtml);
+	$q->send_http_header();
 
-		# if you requested the parsing of a markdown
-		print &Semece::Temp::temp(based => &g_location($q), 
-				menu	=> &gen_menu($q, &g_postd($q)),
-				content => (markdown(join '', <$fd>)));
-
-	}
+	# if you requested the parsing of a markdown
+	print &Semece::Temp::temp(based => &g_location($q), 
+			menu	=> &gen_menu($q, &g_postd($q)),
+			content => (markdown(join '', <$fd>)));
 
 	return OK;
 }
