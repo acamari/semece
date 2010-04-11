@@ -1,9 +1,16 @@
 * fix MIME type obtention in g_postp().
-	we need to calculate it by ourselves since $q->filename makes apache lazy.
+    we need to calculate it by ourselves since $q->filename makes apache lazy.
 * Show only 1 level bellow the current page in the menu
-	Change /post/ to / in the URL
+*	Change /post/ to / in the URL
+    Parse and register the files in the /static dir
+		Add README with caution info about creating a /static dir in postd
 * Include script to generate the front page and feeds
-
-* remove g_suri, g_location; make a module which inherits from Apache::Request
-	(which inherits from Apache)
+* remove g_suri, g_location; 
+    make a module which inherits from Apache::Request
+    (which inherits from Apache)
 * Support long names in the menu (currently they break up ugly)
+* Load (and parse) configuration only on Server load
+* Improve the tools/ scripts
+    Add config generator for apache2
+		Parse command line options
+* Add 404's when there is no content (duh)
