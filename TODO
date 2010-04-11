@@ -1,5 +1,8 @@
-fix MIME type obtention in g_postp().
+* fix MIME type obtention in g_postp().
 	we need to calculate it by ourselves since $q->filename makes apache lazy.
-Show only 1 level bellow the current page in the menu
-Change /post/ to / in the URL
-Include script to generate the front page and feeds
+* Show only 1 level bellow the current page in the menu
+	Change /post/ to / in the URL
+* Include script to generate the front page and feeds
+
+* remove g_suri, g_location; make a module which inherits from Apache::Request
+	(which inherits from Apache)
