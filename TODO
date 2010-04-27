@@ -14,3 +14,4 @@
     Add config generator for apache2
 		Parse command line options
 * Add 404's when there is no content (duh)
+* autogenerate '&nbsp;' at the start of each '<p>'
