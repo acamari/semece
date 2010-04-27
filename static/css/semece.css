@@ -41,6 +41,10 @@ body {
 	padding: 10px;
 }
 
+#footer {
+	font-size: .7em;
+}
+
 div#lista {
 	float: right;
 	width: 60px; 

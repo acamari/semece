@@ -284,7 +284,8 @@ p_post
 	# if you requested the parsing of a markdown
 	print &Semece::Temp::temp(based => &g_location($q), 
 			menu	=> &gen_menu($q, &g_postd($q)),
-			content => (markdown(join '', <$fd>)));
+			content => (markdown(join '', <$fd>)),
+			url	=> $q->uri. $mk_sufx);
 
 	return OK;
 }
