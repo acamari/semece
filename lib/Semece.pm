@@ -75,19 +75,16 @@ serv
 
 	$uri = &g_suri($q);
 
-	if ($uri =~ m!^/post/(.*)?$!) {
-		print STDERR "entering p_post;\n";
-		return &p_post($q);	# prints a post
-	} elsif ($uri =~ m!^/static(/.*)?$!) {
-		# give the user what he requested
+	if ($uri =~ m!^/static(/.*)?$!) {
+		# the user requested one of the static files
 		return DECLINED;
 	} else {
 		# the user send a uri that i don't know what to do with
-		# (send he to the post dir)
-
-		print STDERR "301'ing;\n";
-		return &rdr($q, (&g_location($q). "/post/"));
+		# (send him to the post dir)
+		print STDERR "entering p_post;\n";
+		return &p_post($q);	# prints a post
 	}
+	# NOTREACHED
 }
 
 # get uri
@@ -183,13 +180,13 @@ g_mk_u
 	if ($uri =~ m!/$!) {
 		# if he requested a directory
 		# returns an index.mkd in that directory
-		# in '/post/lol/' -> '/post/lol/index.mkd'
+		# in '/lol/' -> '/lol/index.mkd'
 		print STDERR "g_mk_u: out = (", $uri.  "index". $mk_sufx,
 		      ")\n";
 		return $uri. "index". $mk_sufx;
 	} else {
 		# if you requested something else
-		# ej: if /post/helloworld returns /post/helloword.mkd 
+		# ej: if /helloworld returns /helloword.mkd 
 		print STDERR "g_mk_u: out = (", $uri. $mk_sufx, ")\n";
 		return $uri. $mk_sufx;
 	}
@@ -209,9 +206,6 @@ g_mk_p
 	$postd = &g_postd($q);
 	$uri = &g_suri($q);
 
-	# stripp of /post prefix from uri
-	$uri =~ s!^/post/?!/!;
-
 	print STDERR "g_mk_p: postd = (", $postd , ")\n";
 	print STDERR "g_mk_p: uri = (", $uri , ")\n";
 
@@ -230,7 +224,7 @@ g_mk_p
 	} elsif ($uri !~ m!\..+$!) {
 		# if you requested something without prefix
 		# see if there exists an according markdown
-		# ej: if /post/helloworld check if /post/helloword.mkd exists
+		# ej: if /helloworld check if /helloword.mkd exists
 		print STDERR "g_mk_p: path = (", $postd. "/". $uri. "/".
 			$mk_sufx, ")\n";
 		if (-e ($postd. "/". $uri. $mk_sufx )) {
@@ -284,7 +278,7 @@ gen_menu
 	# XXX: menu generation heuristics
 	%menu = 
 	    # adds a pretty leading slash	
-	    map {("/$_", &g_location($q). "/post/$_")} 
+	    map {("/$_", &g_location($q). "/$_")} 
 	    # strips all .mkd
 	    map {s/$mk_sufx$//; $_}
 	    # if you see a file called /dir/index.mkd just show /dir/
