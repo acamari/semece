@@ -31,8 +31,8 @@ temp
 	    unless exists $opts{'based'};
 	croak "\$opts{'content'} doesn't exist!, stopped" 
 	    unless exists $opts{'content'};
-	croak "\$opts{'url'} doesn't exist!, stopped" 
-	    unless exists $opts{'url'};
+	croak "\$opts{'mkurl'} doesn't exist!, stopped" 
+	    unless exists $opts{'mkurl'};
 
 	$opts{'head'} = "" unless $opts{'head'};
 
@@ -57,7 +57,7 @@ $opts{head}
 	--<br />
 	<div id="footer">
 	Para ver el código fuente de esta página entre
-	<a href="$opts{url}">aquí</a>.
+	<a href="$opts{mkurl}">aquí</a>.
 	</div><!-- #footer -->
 	</div><!-- #content -->
 </div><!-- #container -->

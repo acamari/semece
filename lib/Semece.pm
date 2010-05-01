@@ -14,6 +14,9 @@ package Semece;
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+# nomenclature:
+# 'markdown'	= Source code file of a post.
+# 'post'	= The HTML code generated from a 'markdown' file
 use strict;
 use warnings;
 
@@ -87,6 +90,23 @@ serv
 	}
 }
 
+# get uri
+# normalize an url
+sub
+g_uri
+{
+	my $q		= shift;
+
+	my $uri		= undef;	# stores normalized uri
+
+	$uri = $q->uri;
+	$uri =~ s!/+!/!g;	# normalization
+
+	print STDERR "g_uri: da uri (", $uri, ")\n";
+
+	return $uri;
+}
+
 # get short uri
 # get $q->uri minus $q->location
 sub
@@ -145,10 +165,41 @@ g_location
 	# NOTREACHED
 }
 
-# get post path
-# gets the absolute fs path of a post (.markdown) using only the uri
+# get markdown uri
+# gets the uri of a markdown file, corresponding to a post
+# g_mk_u($posturi) -> $markdown_uri
 sub
-g_postp
+g_mk_u
+{
+	my $q		= shift;
+
+	my $uri		= undef;
+
+	$uri = &g_uri($q);
+
+	print STDERR "g_mk_u: in = (", $uri , ")\n";
+
+	# XXX: markdown obtention heuristics...
+	if ($uri =~ m!/$!) {
+		# if he requested a directory
+		# returns an index.mkd in that directory
+		# in '/post/lol/' -> '/post/lol/index.mkd'
+		print STDERR "g_mk_u: out = (", $uri.  "index". $mk_sufx,
+		      ")\n";
+		return $uri. "index". $mk_sufx;
+	} else {
+		# if you requested something else
+		# ej: if /post/helloworld returns /post/helloword.mkd 
+		print STDERR "g_mk_u: out = (", $uri. $mk_sufx, ")\n";
+		return $uri. $mk_sufx;
+	}
+	# NOTREACHED
+}
+
+# get markdown path
+# gets the absolute *filesystem* path of a post (.markdown) using only the uri
+sub
+g_mk_p
 {
 	my $q		= shift;
 
@@ -161,15 +212,15 @@ g_postp
 	# stripp of /post prefix from uri
 	$uri =~ s!^/post/?!/!;
 
-	print STDERR "g_postp: postd = (", $postd , ")\n";
-	print STDERR "g_postp: uri = (", $uri , ")\n";
+	print STDERR "g_mk_p: postd = (", $postd , ")\n";
+	print STDERR "g_mk_p: uri = (", $uri , ")\n";
 
 	# XXX: markdown obtention heuristics...
 	# XXX: we do the fucking uri -> filename translation here... nasty
 	if ($uri =~ m!/$!) {
 		# if he requested a directory
 		# see if there exits index.mkd in that directory
-		print STDERR "g_postp: path = (", $postd. "/". $uri. "/". 
+		print STDERR "g_mk_p: path = (", $postd. "/". $uri. "/". 
 			"index". $mk_sufx, ")\n";
 		if (-e ($postd. "/". $uri. "/". "index". $mk_sufx)) {
 			return $postd. "/". $uri. "/". "index". $mk_sufx;
@@ -180,7 +231,7 @@ g_postp
 		# if you requested something without prefix
 		# see if there exists an according markdown
 		# ej: if /post/helloworld check if /post/helloword.mkd exists
-		print STDERR "g_postp: path = (", $postd. "/". $uri. "/".
+		print STDERR "g_mk_p: path = (", $postd. "/". $uri. "/".
 			$mk_sufx, ")\n";
 		if (-e ($postd. "/". $uri. $mk_sufx )) {
 			return $postd. "/". $uri. $mk_sufx;
@@ -192,8 +243,8 @@ g_postp
 		# if you requested something with prefix 
 		# do uri -> filename translation and return the corresponding
 		# shit, to this request
-		print STDERR "g_postp: path_info = (", $q->path_info(undef), ")\n";
-		print STDERR "g_postp: path = (", ($postd. $uri), ")\n";
+		print STDERR "g_mk_p: path_info = (", $q->path_info(undef), ")\n";
+		print STDERR "g_mk_p: path = (", ($postd. $uri), ")\n";
 
 		$q->filename($postd. $uri);
 		return undef;
@@ -269,7 +320,7 @@ p_post
 	my $fd		= undef;	# file descriptor
 	my $post	= undef;	# post (.markdown) to show
 
-	$post = &g_postp($q);
+	$post = &g_mk_p($q);
 
 	print STDERR "p_post: uri(", $q->uri , ")\n";
 	print STDERR "p_post: post(", ($post ? $post : ""), ")\n";
@@ -281,12 +332,11 @@ p_post
 	$q->content_type($cthtml);
 	$q->send_http_header();
 
-	# if you requested the parsing of a markdown
+	# if you requested the parsing of a markdown	
 	print &Semece::Temp::temp(based => &g_location($q), 
 			menu	=> &gen_menu($q, &g_postd($q)),
 			content => (markdown(join '', <$fd>)),
-			url	=> $q->uri. $mk_sufx);
-
+			mkurl	=> &g_mk_u($q));
 	return OK;
 }
 
