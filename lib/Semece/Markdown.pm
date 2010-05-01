@@ -1,6 +1,7 @@
 # my patched markdown version, it basically adds a '&nbsp;&nbsp' after each
 # '<p>'
-package Text::Markdown;
+#package Text::Markdown;
+package Semece::Markdown;
 require 5.008_000;
 use strict;
 use warnings;
