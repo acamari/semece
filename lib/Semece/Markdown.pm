@@ -16,6 +16,12 @@ package Semece::Markdown;
 
 # Text::Markdown wrapper
 
-use Text::Markdown qw(markdown);
+use Text::Markdown;
+
+sub
+markdown
+{
+	return &Text::Markdown::markdown(@_);
+}
 
 1;
