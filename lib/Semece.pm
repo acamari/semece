@@ -30,10 +30,11 @@ use CGI qw(:standard);
 use Apache::Constants qw(:response :http);
 use Apache::Request;
 use File::Find;
-use Text::Markdown qq(markdown);
 
 use Semece::Conf;
 use Semece::Temp;
+use Semece::Tool;
+use Semece::Markdown;
 
 my $cthtml	= "text/html; charset=UTF-8";
 my $ctplain	= "text/plain; charset=UTF-8";
@@ -73,7 +74,7 @@ serv
 
 	print STDERR "serv: da old uri = (", $q->uri, ")\n";
 
-	$uri = &g_suri($q);
+	$uri = &Semece::Tool::g_suri($q);
 
 	if ($uri =~ m!^/static(/.*)?$!) {
 		# the user requested one of the static files
@@ -83,81 +84,6 @@ serv
 		# (send him to the post dir)
 		print STDERR "entering p_post;\n";
 		return &p_post($q);	# prints a post
-	}
-	# NOTREACHED
-}
-
-# get uri
-# normalize an url
-sub
-g_uri
-{
-	my $q		= shift;
-
-	my $uri		= undef;	# stores normalized uri
-
-	$uri = $q->uri;
-	$uri =~ s!/+!/!g;	# normalization
-
-	print STDERR "g_uri: da uri (", $uri, ")\n";
-
-	return $uri;
-}
-
-# get short uri
-# get $q->uri minus $q->location
-sub
-g_suri
-{
-	my $q		= shift;
-
-	my $uri		= undef;	# stores short uri
-
-	$uri = substr $q->uri, (length &g_location($q));
-	$uri =~ s!/+!/!g;	# normalization
-
-	print STDERR "g_suri: da suri (", $uri, ")\n";
-
-	return $uri;
-}
-
-# returns the postd (fs directory where the posts are)
-sub
-g_postd
-{
-	my $q		= shift;
-
-	# reads SemecePostd from apache configuration
-	if (my $tmp = $q->dir_config('SemecePostd')) {
-		# sends directory names without final slash
-		$tmp =~ s!/+$!!;	
-		return $tmp;
-	} else {
-		print STDERR "keys:", (join(',', keys %ENV)), "\n";
-		croak "I cannot get SemecePostd, stopped";
-		return undef;	# NOTREACHED
-	}
-	# NOTREACHED
-}
-
-
-# returns the <Location > from the apache conf
-sub
-g_location
-{
-	my $q		= shift;
-
-
-	# reads Current Working Dir from apache configuration
-	if (my $tmp = $q->location) {
-		print STDERR "g_location: location ($tmp)\n";
-		# sends directory names without final slash
-		$tmp =~ s!/+$!!;	
-		return $tmp;
-	} else {
-		croak "I cannot get Location, stopped";
-		return undef;	
-		# NOTREACHED
 	}
 	# NOTREACHED
 }
@@ -203,8 +129,8 @@ g_mk_p
 	my $postd	= undef;	# fs dir where are the posts
 	my $uri		= undef;
 
-	$postd = &g_postd($q);
-	$uri = &g_suri($q);
+	$postd = &Semece::Tool::g_postd($q);
+	$uri = &Semece::Tool::g_suri($q);
 
 	print STDERR "g_mk_p: postd = (", $postd , ")\n";
 	print STDERR "g_mk_p: uri = (", $uri , ")\n";
@@ -278,7 +204,7 @@ gen_menu
 	# XXX: menu generation heuristics
 	%menu = 
 	    # adds a pretty leading slash	
-	    map {("/$_", &g_location($q). "/$_")} 
+	    map {("/$_", &Semece::Tool::g_location($q). "/$_")} 
 	    # strips all .mkd
 	    map {s/$mk_sufx$//; $_}
 	    # if you see a file called /dir/index.mkd just show /dir/
@@ -327,9 +253,9 @@ p_post
 	$q->send_http_header();
 
 	# if you requested the parsing of a markdown	
-	print &Semece::Temp::temp(based => &g_location($q), 
-			menu	=> &gen_menu($q, &g_postd($q)),
-			content => (markdown(join '', <$fd>)),
+	print &Semece::Temp::temp(based => &Semece::Tool::g_location($q), 
+			menu	=> &gen_menu($q, &Semece::Tool::g_postd($q)),
+			content => (&Semece::Markdown::parse($q, (join '', <$fd>))),
 			mkurl	=> &g_mk_u($q));
 	return OK;
 }
