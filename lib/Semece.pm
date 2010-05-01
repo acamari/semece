@@ -189,6 +189,7 @@ gen_menu
 
 	$dir =~ s!/+$!!g;
 
+	# gets all the files in $postd, using paths relative to $postd
 	find(sub {
 		my $name	= undef;
 
@@ -204,7 +205,9 @@ gen_menu
 	# XXX: menu generation heuristics
 	%menu = 
 	    # adds a pretty leading slash	
-	    map {("/$_", &Semece::Tool::g_location($q). "/$_")} 
+	    # substitute '_' and '-' to ' ' (in the menu label)
+	    map {my $l; (scalar ($l = $_, $l =~ s/[_-]/\ /g, "/$l"), 
+		     &Semece::Tool::g_location($q). "/$_")} 
 	    # strips all .mkd
 	    map {s/$mk_sufx$//; $_}
 	    # if you see a file called /dir/index.mkd just show /dir/
