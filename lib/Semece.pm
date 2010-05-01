@@ -34,7 +34,7 @@ use File::Find;
 use Semece::Conf;
 use Semece::Temp;
 use Semece::Tool;
-use Semece::Markdown;
+use Semece::Parse;
 
 my $cthtml	= "text/html; charset=UTF-8";
 my $ctplain	= "text/plain; charset=UTF-8";
@@ -255,7 +255,7 @@ p_post
 	# if you requested the parsing of a markdown	
 	print &Semece::Temp::temp(based => &Semece::Tool::g_location($q), 
 			menu	=> &gen_menu($q, &Semece::Tool::g_postd($q)),
-			content => (&Semece::Markdown::parse($q, (join '', <$fd>))),
+			content => (&Semece::Parse::parse($q, (join '', <$fd>))),
 			mkurl	=> &g_mk_u($q));
 	return OK;
 }
