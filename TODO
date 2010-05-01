@@ -9,5 +9,4 @@
 * Improve the tools/ scripts
     Add config generator for apache2
 		Parse command line options
-* autogenerate '&nbsp;' at the start of each '<p>'
 * support a set of macros into markdown... and document them.
