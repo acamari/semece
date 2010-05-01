@@ -1,0 +1,38 @@
+package Semece::Parse;
+
+# Copyright (c) 2010 Abel Abraham Camarillo Ojeda <acamari@the00z.org>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+# Currently parses a markdown file previously expanding some macros
+# and returns the parsed markdown file
+use Semece::Markdown qq(markdown);
+
+sub
+parse
+{
+	my $q		= shift;	# Apache::Request object
+	my $itxt	= shift;	# text to parse
+
+	my $otxt	= undef;	# parsed text
+	
+	$otxt = $itxt;
+
+	# XXX: Use a hash of macro -> expansion
+	$otxt =~ s!\$/!&Semece::Tool::g_location($q)!e;
+
+	$otxt = markdown($otxt);
+	return $otxt;
+}
+
+1;
