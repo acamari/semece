@@ -27,6 +27,10 @@ body {
 	padding: 5px; 
 }
 
+#content p {
+	text-indent: 15px;
+}
+
 .blink {
 	text-decoration: blink;
 }
@@ -106,6 +110,7 @@ div#menu {
 
 div#menu ul {
 	margin: 0px;
+	margin-left: 15px;
 	padding: 0px;
 	/*
 	white-space: nowrap ;
@@ -115,7 +120,13 @@ div#menu ul {
 div#menu li {
 	list-style-type: none; 
 	list-style-position: inside; 
+	margin: 0px;
+	padding: 0px;
+	
+	/*
 	display: inline;
+	*/
+	text-indent: -10px;
 }
 
 div#menu li a {
