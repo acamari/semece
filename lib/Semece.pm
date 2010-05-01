@@ -98,7 +98,7 @@ g_mk_u
 
 	my $uri		= undef;
 
-	$uri = &g_uri($q);
+	$uri = &Semece::Tool::g_uri($q);
 
 	print STDERR "g_mk_u: in = (", $uri , ")\n";
 
@@ -224,7 +224,7 @@ gen_menu
 
 	$html = '<ul id="menu">'. 
 		(join ('', 
-		map {qq!<li id="menu">$_</li><br />\n!}
+		map {qq!<li id="menu">$_</li>\n!}
 		map {if ($q->uri eq $menu{$_}) { 
 			qq!$_<span class="here"> _</span>!;
 			} else {qq!<a href="$menu{$_}">$_</a>!}}
