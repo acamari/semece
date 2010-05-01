@@ -1,3 +1,5 @@
+# my patched markdown version, it basically adds a '&nbsp;&nbsp' after each
+# '<p>'
 package Text::Markdown;
 require 5.008_000;
 use strict;
@@ -1320,7 +1322,7 @@ sub _FormParagraphs {
     foreach (@grafs) {
         unless (defined( $self->{_html_blocks}{$_} )) {
             $_ = $self->_RunSpanGamut($_);
-            s/^([ \t]*)/<p>/;
+            s/^([ \t]*)/<p>&nbsp;&nbsp;/;
             $_ .= "</p>";
         }
     }
