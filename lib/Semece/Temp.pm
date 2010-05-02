@@ -20,6 +20,10 @@ use warnings;
 
 use Carp; 
 
+# opts:
+#	based		=> Base directory
+#	content		=> Text to put in #content
+#	mkurl		=> markdown source url
 sub
 temp
 {
@@ -38,14 +42,16 @@ temp
 
 	$html = <<HTML;
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <title>SeNTX</title>
 <link rel="stylesheet" type="text/css" href="$opts{based}/static/css/semece.css" />
+<script src="$opts{based}/static/js/Hyphenator.js" type="text/javascript">
+</script>  
 $opts{head}
 </head>
-<body>
-<div id="container">
+<body class="hyphenate">
+<div id="container"> 
 	<div id="banner">
 	<h1> #SeNTX </h1>
 	</div><!-- #banner -->
@@ -61,6 +67,9 @@ $opts{head}
 	</div><!-- #footer -->
 	</div><!-- #content -->
 </div><!-- #container -->
+<script type="text/javascript">
+	Hyphenator.run();
+</script>
 </body>
 </html>
 HTML
