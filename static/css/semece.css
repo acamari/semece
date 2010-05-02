@@ -23,7 +23,7 @@ body {
 	left: 380px;
 	color:#EEE; 
 	width: 610px;
-	text-align: left; 
+	text-align: justify; 
 	padding: 5px; 
 }
 
@@ -103,7 +103,7 @@ a:hover {
 div#menu {
 	top: 100px;
 	float: left;
-	width: 150px;
+	width: 200px;
 	line-height: 20px;
 	text-align: left;
 }
