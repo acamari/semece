@@ -48,6 +48,9 @@ temp
 <link rel="stylesheet" type="text/css" href="$opts{based}/static/css/semece.css" />
 <script src="$opts{based}/static/js/Hyphenator.js" type="text/javascript">
 </script>  
+<script type="text/javascript">
+	Hyphenator.run();
+</script>
 $opts{head}
 </head>
 <body class="hyphenate">
@@ -67,9 +70,6 @@ $opts{head}
 	</div><!-- #footer -->
 	</div><!-- #content -->
 </div><!-- #container -->
-<script type="text/javascript">
-	Hyphenator.run();
-</script>
 </body>
 </html>
 HTML
