@@ -4,7 +4,6 @@
 * remove g_suri, g_location; 
     make a module which inherits from Apache::Request
     (which inherits from Apache)
-* Support long names in the menu (currently they break up ugly)
 * Load (and parse) configuration only on Server load
 * Improve the tools/ scripts
     Add config generator for apache2
