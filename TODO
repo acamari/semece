@@ -1,5 +1,3 @@
-* fix MIME type obtention in g_mk_p().
-    we need to calculate it by ourselves since $q->filename makes apache lazy.
 * Include script to generate the front page and feeds
 * remove g_suri, g_location; 
     make a module which inherits from Apache::Request

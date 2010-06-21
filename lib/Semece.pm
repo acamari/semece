@@ -35,6 +35,7 @@ use Semece::Conf;
 use Semece::Temp;
 use Semece::Tool;
 use Semece::Parse;
+use Semece::MIME;
 
 my $cthtml	= "text/html; charset=UTF-8";
 my $ctplain	= "text/plain; charset=UTF-8";
@@ -167,6 +168,7 @@ g_mk_p
 		print STDERR "g_mk_p: path = (", ($postd. $uri), ")\n";
 
 		$q->filename($postd. $uri);
+		$q->content_type(&Semece::MIME::mime_t($postd. $uri));
 		return undef;
 	}
 	# NOTREACHED
