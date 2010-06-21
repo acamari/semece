@@ -10,5 +10,3 @@
     Add config generator for apache2
 		Parse command line options
 * support a set of macros into markdown... and document them.
-* convert '_' and '-' in source names as ' ' in the menu labels (but not in
-  uris)
