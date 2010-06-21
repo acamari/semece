@@ -22,9 +22,16 @@ use MIME::Types;
 # Default MIME type
 my $def_t	= "application/octect-stream"; # If I cannot got correct MIME
 my $types	= undef;	# MIME::Types object (note 'Types' vs 'Type')
+my $mkd_sufx	= ["mkd"];
+my $mkd_t	= undef;
+
+$mkd_t = MIME::Type->new(type => "text/plain", 
+			extensions => $mkd_sufx);
 
 $types = MIME::Types->new();
 die "I cannot init MIME::Types->new()!, $!, stopped" unless $types;
+
+$types->addType($mkd_t);
 
 # gets the MIME type corresponding to a $filename, $filename doesn't need to
 # exist, returns a string

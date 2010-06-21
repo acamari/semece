@@ -163,7 +163,7 @@ g_mk_p
 	} else {
 		# if you requested something with prefix 
 		# do uri -> filename translation and return the corresponding
-		# shit, to this request
+		# shit to this request
 		print STDERR "g_mk_p: path_info = (", $q->path_info(undef), ")\n";
 		print STDERR "g_mk_p: path = (", ($postd. $uri), ")\n";
 
