@@ -22,3 +22,4 @@ File::Find	(by default)
 Apache::Constants 
 Apache::Request (depends on libapreq)
 Text::Markdown 
+MIME::Types
