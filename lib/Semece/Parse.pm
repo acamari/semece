@@ -17,6 +17,7 @@ package Semece::Parse;
 # Currently parses a markdown file previously expanding some macros
 # and returns the parsed markdown file
 use Semece::Markdown; 
+use Semece::Sublatex; 
 
 sub
 parse
@@ -31,6 +32,8 @@ parse
 	# XXX: Use a hash of macro -> expansion
 	$otxt =~ s!\$/!&Semece::Tool::g_location($q)!e;
 
+	# Parse sublatex code
+	$otxt = &Semece::Sublatex::sublatex($otxt);
 	$otxt = &Semece::Markdown::markdown($otxt);
 	return $otxt;
 }
