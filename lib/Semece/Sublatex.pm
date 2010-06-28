@@ -54,7 +54,7 @@ use warnings;
 
 my $debug = 0;
 
-my $magic	= "_";	# a str can never come with '\n' so we
+my $magic	= chr(0x0);	# a str can never come with '\n' so we
 				# use it as magical placeholder
 
 # this expands to a single \ in a m/$esc/
