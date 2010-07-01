@@ -35,8 +35,10 @@ body {
 	font-style: italic;
 }
 
-.blink {
-	text-decoration: blink;
+/* don't indent span <code> */
+#content pre > code {
+	position: relative;
+	left: 8ex;
 }
 
 #banner { 
