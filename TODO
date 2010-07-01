@@ -1,3 +1,4 @@
+* Adds support to prevent Sublatex parsing in <code> </code> blocks.
 * Include script to generate the front page and feeds
 * remove g_suri, g_location; 
     make a module which inherits from Apache::Request
