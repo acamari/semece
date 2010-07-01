@@ -159,3 +159,7 @@ div#menu li a:hover {
 .here {
 	text-decoration: blink;
 }
+
+code{
+	color: green;
+}
