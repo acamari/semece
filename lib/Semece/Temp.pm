@@ -48,11 +48,7 @@ temp
 <link rel="stylesheet" type="text/css" href="$opts{based}/static/css/semece.css" />
 <script src="$opts{based}/static/js/Hyphenator.js" type="text/javascript">
 </script>  
-<!-- Disables hyphenator, does not work Ok with Chrome + Vrome
-<script type="text/javascript">
 	Hyphenator.run();
-</script> -->
-
 $opts{head}
 </head>
 <body class="hyphenate">
