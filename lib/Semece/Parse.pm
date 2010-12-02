@@ -16,25 +16,25 @@ package Semece::Parse;
 
 # Currently parses a markdown file previously expanding some macros
 # and returns the parsed markdown file
-use Semece::Markdown; 
 use Semece::Sublatex; 
+use Semece::Markdown; 
 
 sub
 parse
 {
 	my $q		= shift;	# Apache::Request object
-	my $itxt	= shift;	# text to parse
+	my $in		= shift;	# input text
 
-	my $otxt	= undef;	# parsed text
+	my $out		= undef;	# output text
 	
-	$otxt = $itxt;
+	$out = $in;
 
 	# XXX: Use a hash of macro -> expansion
-	$otxt =~ s!\$%!&Semece::Tool::g_location($q)!ge;
+	$out =~ s!\$%!&Semece::Tool::g_location($q)!ge;
 
 	# Parse sublatex code
-	$otxt = &Semece::Sublatex::sublatex($otxt);
-	$otxt = &Semece::Markdown::markdown($otxt);
+	$out = &Semece::Sublatex::sublatex($out);
+	$out = &Semece::Markdown::markdown($out);
 	return $otxt;
 }
 
