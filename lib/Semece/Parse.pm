@@ -30,7 +30,7 @@ parse
 	$otxt = $itxt;
 
 	# XXX: Use a hash of macro -> expansion
-	$otxt =~ s!\$%!&Semece::Tool::g_location($q)!e;
+	$otxt =~ s!\$%!&Semece::Tool::g_location($q)!ge;
 
 	# Parse sublatex code
 	$otxt = &Semece::Sublatex::sublatex($otxt);
