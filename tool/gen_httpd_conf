@@ -30,6 +30,20 @@ location='/~$user/semece'
 # This is the filesystem path where files can be found.
 # It's asummed that there can be a direct relation between $location and $currd
 currd=`pwd`
+# If this file exists in the current directory then we are in the top directory
+# of the semece source code
+topf=".topd"
+
+# Check if $currd is the top directory of the semece source code.
+if ! test -e "$currd/$topf"; then
+	error="Error: you aren't on the top directory of the semece "
+	error="${error}directory; current directory ($currd); " 
+	error="${error}change to the top directory of semece and re-run "
+	error="${error}this program."
+	echo "$error" >/dev/stderr
+	exit 1;
+fi
+
 postd="$currd/../semece.postd"
 
 # Deletes all trailing slashes from a variable, prints on stdout the variable
