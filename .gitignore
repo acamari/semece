@@ -1,4 +1,3 @@
 *~
 *.swp
-startup.pl
-httpd.conf
+Semece.psgi
