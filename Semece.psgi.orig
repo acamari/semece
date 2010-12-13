@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+#
+# Copyright (c) 2010 Abel Abraham Camarillo Ojeda <acamari@verlet.org>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+# PSGI entry point and configuration file.
+# Please copy this file as 'Semece.psgi', and edit it!.
+
+my $semece	= undef;
+my $conf	= undef;
+
+######################
+# USER CONFIGURATION #
+######################
+sub setconf {{
+	srcd		=> "",			# Absolute path to the current
+						# dir.
+	postd		=> "",			# Absolute path to the data dir.
+	mkd_sufx	=> ".mkd",		# Suffix for markdown files
+						# (default: ".mkd")
+	mkd_idx		=> "index.mkd",		# Index file: file to parse when
+						# a user request the parent
+						# directory.
+}}
+
+##############
+# DON'T EDIT #
+##############
+sub grow_inc {unshift(@INC, $conf->{srcd}. "/lib")}
+BEGIN {$conf = setconf(); grow_inc();}
+
+$semece = sub {
+	my $env 	= shift;
+
+	use Semece;
+	$env->{"semece.conf"} = $conf;
+	return &Semece::serv($env);
+}
+
