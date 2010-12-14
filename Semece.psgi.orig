@@ -51,6 +51,9 @@ BEGIN {$conf = setconf(); grow_inc();}
 $semece = sub {
 	my $env 	= shift;
 
+	# XXX: The $conf set in the BEGIN is lost for unknown reasons...
+	$conf = setconf();
+
 	use Semece;
 	$env->{"semece.conf"} = $conf;
 	return &Semece::serv($env);
