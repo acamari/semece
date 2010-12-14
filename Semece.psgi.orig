@@ -42,9 +42,12 @@ sub setconf {{
 ##############
 # DON'T EDIT #
 ##############
+# Adds $conf->{srcd} to the search path for libraries, this must be done at
+# compiling time.
 sub grow_inc {unshift(@INC, $conf->{srcd}. "/lib")}
 BEGIN {$conf = setconf(); grow_inc();}
 
+# PSGI entry point.
 $semece = sub {
 	my $env 	= shift;
 
