@@ -25,14 +25,18 @@ my $conf	= undef;
 # USER CONFIGURATION #
 ######################
 sub setconf {{
-	srcd		=> "",			# Absolute path to the current
-						# dir.
-	postd		=> "",			# Absolute path to the data dir.
+	srcd		=> "",			# Absolute filesystem path to
+						# the current dir. (No default
+						# value)
+	postd		=> "",			# Absolute filesystem path to
+						# the data dir. (No default
+						# value)
 	mkd_sufx	=> ".mkd",		# Suffix for markdown files
 						# (default: ".mkd")
 	mkd_idx		=> "index.mkd",		# Index file: file to parse when
 						# a user request the parent
-						# directory.
+						# directory. (default:
+						# "index.mkd")
 }}
 
 ##############
