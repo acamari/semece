@@ -6,9 +6,10 @@
 use strict;
 use warnings;
 
-use constant MAXCOMMIT => 10;
+use constant DEBUG	=> 1;
+use constant MAXCOMMIT	=> 10;
 # Length of the nit hash in characters
-use constant GITSHALEN => 40;
+use constant GITSHALEN	=> 40;
 
 my $progn	= $0; # Current program name
 my $hdr		= "#Noticias:\n";
@@ -61,29 +62,36 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		}
 	}
 
-	for (qw(hash	
-		authn
-		authm
-		date
-		msg
-		file)) {
-		printf(STDERR "\$%s: '%s'\n", 
-		       $_, ($commit->{$_} ? $commit->{$_} : ""));
-	}
-
 	if (not $commit->{msg}) {
 		die sprintf("Empty commit msg!, ".
 		            "stopped at %s line %s; reading %s line %s.\n",
 			    $progn, __LINE__, $ARGV, $.);
 	}
 
-	print <<EOF;
+	# Prunes empty lines at the start and end of $msg
+	$commit->{msg} =~ s/^\n+//s;
+	$commit->{msg} =~ s/\n+$//s;
+
+	printf(STDERR "\$commit = {\n") if DEBUG;
+	for (qw(hash	
+		authn
+		authm
+		date
+		msg
+		file)) {
+		printf(STDERR "\t%s: '%s'\n", 
+		       $_, ($commit->{$_} ? $commit->{$_} : "")) if DEBUG;
+	}
+	printf(STDERR "};\n") if DEBUG;
+
+	print <<MARKDOWN;
 * ###$commit->{date}: 
 
 $commit->{msg} 
+MARKDOWN
 
-\t[Ir.]($commit->{file})
-
-EOF
+	print <<MARKDOWN if $commit->{file};
+  [Ir.]($commit->{file})
+MARKDOWN
 
 }
