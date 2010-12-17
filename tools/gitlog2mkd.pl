@@ -61,11 +61,11 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		}
 	}
 
-	printf(STDERR "\$hash: $commit->{hash}\n");
-	printf(STDERR "\$authn: $commit->{authn}\n");
-	printf(STDERR "\$authm: $commit->{authm}\n");
-	printf(STDERR "\$date: $commit->{date}\n");
-	printf(STDERR "\$msg: $commit->{msg}\n");
+	for (keys %$commit) {
+		printf(STDERR "\$%s: %s\n", 
+		       $_, ($commit->{$_} ? $commit->{$_} : ""));
+	}
+
 	if($commit->{file}){
 		printf(STDERR "\$file: $commit->{file}\n");
 	}
