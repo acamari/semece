@@ -61,13 +61,14 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		}
 	}
 
-	for (sort keys %$commit) {
-		printf(STDERR "\$%s: %s\n", 
+	for (qw(hash	
+		authn
+		authm
+		date
+		msg
+		file)) {
+		printf(STDERR "\$%s: '%s'\n", 
 		       $_, ($commit->{$_} ? $commit->{$_} : ""));
-	}
-
-	if ($commit->{file}) {
-		printf(STDERR "\$file: $commit->{file}\n");
 	}
 
 	if (not $commit->{msg}) {
