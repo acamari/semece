@@ -76,7 +76,7 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 			    $progn, __LINE__, $ARGV, $.);
 	}
 
-	print <<EOF
+	print <<EOF;
 * ###$commit->{date}: 
 
 $commit->{msg} 
@@ -84,5 +84,5 @@ $commit->{msg}
 \t[Ir.]($commit->{file})
 
 EOF
-;
+
 }
