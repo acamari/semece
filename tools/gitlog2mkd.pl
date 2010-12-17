@@ -53,8 +53,8 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 	# Iterating over a single commit
 	while (<>) {
 		last if /$git_cr/;
-		if(/^\s+(\w.*)/){
-				$commit->{msg} .= "\t" . $1 . "\n";
+		if(/^\s+/){
+			$commit->{msg} .= $_;
 		}elsif(!$commit->{file} && /^\w/){
 			chomp;
 			$commit->{file} = $_;
@@ -76,7 +76,6 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 			    $progn, __LINE__, $ARGV, $.);
 	}
 
-	chomp $commit->{date};
 	print <<EOF
 * ###$commit->{date}: 
 
