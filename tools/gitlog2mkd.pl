@@ -61,7 +61,7 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		}
 	}
 
-	for (keys %$commit) {
+	for (sort keys %$commit) {
 		printf(STDERR "\$%s: %s\n", 
 		       $_, ($commit->{$_} ? $commit->{$_} : ""));
 	}
