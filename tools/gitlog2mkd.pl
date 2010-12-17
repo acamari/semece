@@ -31,7 +31,7 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		authn	=> undef, # Author name
 		authm	=> undef, # Author mail
 		date	=> undef, # Commit date
-		msg		=> undef, # Commit message
+		msg	=> undef, # Commit message
 		file	=> undef  # First changed file
 	};
 
@@ -66,7 +66,7 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		       $_, ($commit->{$_} ? $commit->{$_} : ""));
 	}
 
-	if($commit->{file}){
+	if ($commit->{file}) {
 		printf(STDERR "\$file: $commit->{file}\n");
 	}
 
