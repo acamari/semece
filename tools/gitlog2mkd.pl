@@ -26,23 +26,25 @@ $_ = <>; # Reads first line
 
 # Iterates over commits
 for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
-	my $hash	= undef; # Commit hash
-	my $authn	= undef; # Author name
-	my $authm	= undef; # Author mail
-	my $date	= undef; # Commit date
-	my $msg		= undef; # Commit message
-	my $file	= undef; # First changed file
+	my $commit = {
+		hash	=> undef, # Commit hash
+		authn	=> undef, # Author name
+		authm	=> undef, # Author mail
+		date	=> undef, # Commit date
+		msg		=> undef, # Commit message
+		file	=> undef  # First changed file
+	};
 
-	if (not scalar(($hash) = /$git_cr/)) {
+	if (not scalar(($commit->{hash}) = /$git_cr/)) {
 		die sprintf("This doesn't look like a commit message!, ".
 		            "stopped at %s line %s; reading %s line %s.\n",
 			    $progn, __LINE__, $ARGV, $.);
-	} elsif (not scalar(($authn, $authm) 
+	} elsif (not scalar(($commit->{authn}, $commit->{authm}) 
 			    = <> =~ /^Author:\s+([^<]+)<([^>]*)>$/)) {
 		die sprintf("This doesn't look like an 'Author:' line!, ".
 		            "stopped at %s line %s; reading %s line %s.\n",
 			    $progn, __LINE__, $ARGV, $.);
-	} elsif (not scalar(($date) = <> =~ /^Date:\s+(.+)$/)) {
+	} elsif (not scalar(($commit->{date}) = <> =~ /^Date:\s+(.+)$/)) {
 		die sprintf("This doesn't look like a 'Date:' line!, ".
 		            "stopped at %s line %s; reading %s line %s.\n",
 			    $progn, __LINE__, $ARGV, $.);
@@ -51,33 +53,37 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 	# Iterating over a single commit
 	while (<>) {
 		last if /$git_cr/;
-		if(/^\s/){
-			/^\s(.*?)/;
-			$msg .= $_ ;
-		}elsif(!$file){
+		if(/^\s+(\w.*)/){
+				$commit->{msg} .= "\t" . $1 . "\n";
+		}elsif(!$commit->{file} && /^\w/){
 			chomp;
-			$file = $_;
+			$commit->{file} = $_;
 		}
 	}
 
-	printf(STDERR "\$hash: $hash\n");
-	printf(STDERR "\$authn: $authn\n");
-	printf(STDERR "\$authm: $authm\n");
-	printf(STDERR "\$date: $date\n");
-	printf(STDERR "\$msg: $msg\n");
-	if($file){
-		printf(STDERR "\$file: $file\n");
+	printf(STDERR "\$hash: $commit->{hash}\n");
+	printf(STDERR "\$authn: $commit->{authn}\n");
+	printf(STDERR "\$authm: $commit->{authm}\n");
+	printf(STDERR "\$date: $commit->{date}\n");
+	printf(STDERR "\$msg: $commit->{msg}\n");
+	if($commit->{file}){
+		printf(STDERR "\$file: $commit->{file}\n");
 	}
 
-	if (not $msg) {
+	if (not $commit->{msg}) {
 		die sprintf("Empty commit msg!, ".
 		            "stopped at %s line %s; reading %s line %s.\n",
 			    $progn, __LINE__, $ARGV, $.);
 	}
 
-	chomp $date;
+	chomp $commit->{date};
 	print <<EOF
-  *$date: $msg [Ir.][$file]
+* ###$commit->{date}: 
+
+$commit->{msg} 
+
+\t[Ir.]($commit->{file})
+
 EOF
 ;
 }
