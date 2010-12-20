@@ -64,7 +64,9 @@ $conf = { %$conf,
 # "key" of this "hash", if it matches, then we look into the hash "value" (which
 # must be a true hash ref) for a key named "fs" which declares an anonymous
 # subroutine which is run with two arguments: the original URI, and the regex
-# that matched it. You are free to implement your URI to filesystem translation
+# that matched it; this subroutine must return an string value, and it must be
+# the filesystem path corresponding to that URI. 
+#   You are free to implement your URI to filesystem translation
 # however you like (but be sure to not insert any '..', or any other insecure
 # shit). 
 $conf->{uri2fs}		= [
