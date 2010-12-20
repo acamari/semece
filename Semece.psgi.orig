@@ -21,31 +21,102 @@
 my $semece	= undef;
 my $conf	= undef;
 
+sub setconf;
+sub grow_inc;
+
 ######################
 # USER CONFIGURATION #
 ######################
-sub setconf {{
-	srcd		=> "",			# Absolute filesystem path to
-						# the current dir. (No default
-						# value)
-	postd		=> "",			# Absolute filesystem path to
-						# the data dir. (No default
-						# value)
-	mkd_sufx	=> ".mkd",		# Suffix for markdown files
-						# (default: ".mkd")
-	mkd_idx		=> "index.mkd",		# Index file: file to parse when
-						# a user request the parent
-						# directory. (default:
-						# "index.mkd")
-}}
+sub setconf {
+# About filesystem paths.
+$conf = {
+	# Absolute filesystem path to the current dir. (No default value)
+	srcd		=> "",
+	# Absolute filesystem path to the data dir. (No default value)
+	postd		=> "",
+	# Absolute filesystem path to the user dir. (Default: /home/)
+	userd		=> '/home/'
+};
+
+# About content.
+$conf = { %$conf, 
+	# Suffix for markdown files (default: ".mkd")
+	mkd_sufx	=> ".mkd",		
+	# Index file: file to parse when a user request the parent directory.
+	# (default: "index.mkd")
+	mkd_idx		=> "index.mkd",		
+	#  Markdown content type: default content-type for markdown.
+	mkd_ct		=> "text/plain; charset=UTF-8;",
+	# Content-Type for plain text: Content-Type header to show when we are
+	# returning plain text to the user. (default: "text/plain;
+	# charset=UTF-8")
+	plain_ct	=> "text/plain; charset=UTF-8;", 
+	# Content-Type for HTML: Content-Type header to show when we are
+	# returning HTML to the user. (default: "text/html; charset=UTF-8")
+	html_ct		=> "text/html; charset=UTF-8;", 
+	# Fallback Content-Type: when I cannot determine which one to use.
+	fb_ct		=> "application/octect-stream",
+};
+
+# URI to filesystem resolution "table"; this _must_ be an array ref. We travel
+# this array using it as a hash (getting a key and value pair (so this array ref
+# _must_ have an even number of elements)). First, we match an URI against the
+# "key" of this "hash", if it matches, then we look into the hash "value" (which
+# must be a true hash ref) for a key named "fs" which declares an anonymous
+# subroutine which is run with two arguments: the original URI, and the regex
+# that matched it. You are free to implement your URI to filesystem translation
+# however you like (but be sure to not insert any '..', or any other insecure
+# shit). 
+$conf->{uri2fs}		= [
+		qr!^/static$|^/static/! => {
+			name	=> "static",
+			fs	=> sub {
+				my ($uri, $regex) = @_;
+				return $conf->{srcd}. $uri;
+			}
+		},
+		qr!^/~([[:alnum:]_]+)!	=> {
+			name	=> "userdir",
+			fs	=> sub {
+				my ($uri, $regex) = @_;
+				my ($user) = $uri =~ $regex;
+				die "\$user mustn't be undef!, stopped" 
+				    unless $user;
+				$uri =~ s/$regex//;
+				return $conf->{userd}. "/". $user. 
+				       "/".  "public_html/".  $uri;
+			}
+		},
+		qr!^/.*$!	=> {
+			name	=> "postd",
+			fs	=> sub {
+				my ($uri, $regex) = @_;
+				return $conf->{postd}. "/". $uri;
+			}
+		},
+];
+
+$conf;
+}
 
 ##############
 # DON'T EDIT #
 ##############
+sub checkconf {
+	my $conf = shift;
+	if (not defined($conf->{srcd})) { 
+		die "ERROR: \$conf->{srcd} mustn't be undef!, stopped";
+	} elsif (not $conf->{srcd}) {
+		die "ERROR: \$conf->{srcd} mustn't be empty!, stopped";
+	}
+	return $conf;
+}
+
+
 # Adds $conf->{srcd} to the search path for libraries, this must be done at
 # compiling time.
 sub grow_inc {unshift(@INC, $conf->{srcd}. "/lib")}
-BEGIN {$conf = setconf(); grow_inc();}
+BEGIN {$conf = checkconf(setconf()); grow_inc();}
 
 # PSGI entry point.
 $semece = sub {
