@@ -19,39 +19,53 @@ use warnings;
 
 use MIME::Types;
 
+my $debug	= undef; # References a Semec::Debug object
 # Default MIME type
-my $def_t	= "application/octect-stream"; # If I cannot got correct MIME
-my $types	= undef;	# MIME::Types object (note 'Types' vs 'Type')
-my $mkd_sufx	= ["mkd"];
-my $mkd_t	= undef;
+my $fb_mime	= "application/octect-stream"; # Fallback MIME Type
+my $types	= undef; # MIME::Types object (note 'Types' vs 'Type')
+my $mkd_sufx	= [];	# Suffix for markdown files
+my $mkd_t	= undef; # MIME::Type object for markdown files
 
-$mkd_t = MIME::Type->new(type => "text/plain", 
-			extensions => $mkd_sufx);
+$types = MIME::Types->new() or
+    die "I cannot init MIME::Types->new()!, $!, stopped"; 
 
-$types = MIME::Types->new();
-die "I cannot init MIME::Types->new()!, $!, stopped" unless $types;
+# Configurates our MIME module, currently it stablishes what extension is the
+# default for markdown files, returns true if all is OK, undef in case of error.
+sub
+conf
+{
+	my $conf	= shift; # Semece configuration object
 
-$types->addType($mkd_t);
+	$debug = $Semece::debug;
 
-# gets the MIME type corresponding to a $filename, $filename doesn't need to
-# exist, returns a string
+	return unless $conf->{mkd_sufx} or $conf->{mkd_ct};
+	$mkd_t = MIME::Type->new(type => 'text/plain',
+				 extensions => [$conf->{mkd_sufx}]);
+	$types->addType($mkd_t);
+	return 1;
+}
+
+# Gets the MIME type corresponding to a $filename, $filename doesn't need to
+# exist, returns a MIME type as string if everything is OK. Returns undef
+# otherwise.
 # ex: mime_t("lol.pdf") -> 'application/pdf'
 sub
 mime_t
 {
 	my $f		= shift; # filename
 	
-	my $m		= undef; # MIME::Type object
+	my $m		= undef; # Temporary MIME::Type object
 	my $r		= undef; # MIME type get (example: $r = 'text/plain')
 
+	$debug->prntf("mime_t: arg '%s';\n", $f);
 	$m = $types->mimeTypeOf($f);
 
 	if ($m) {
 		$r = $m->type();
 	} else {
-		$r = $def_t;
+		$r = $fb_mime;
 	}
-	print STDERR "mime_t($f) = $r;\n";
+	$debug->prntf("mime_t: ret '%s';\n", $r);
 
 	return $r;
 }
