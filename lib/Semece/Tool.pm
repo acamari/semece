@@ -17,22 +17,6 @@ package Semece::Tool;
 # Stores common functions
 
 use Carp;
-
-# get uri
-# normalize an url
-sub
-g_uri
-{
-	my $q		= shift;
-
-	my $uri		= undef;	# stores normalized uri
-$uri = $q->uri; $uri =~ s!/+!/!g;	# normalization
-
-	print STDERR "g_uri: da uri (", $uri, ")\n";
-
-	return $uri;
-}
-
 # get short uri
 # get $q->uri minus $q->location
 sub

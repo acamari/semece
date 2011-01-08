@@ -39,6 +39,7 @@ temp
 	    unless exists $opts{'mkurl'};
 
 	$opts{'head'} = "" unless $opts{'head'};
+	$opts{'based'} = "" if $opts{based} eq '/';
 
 	$html = <<HTML;
 <!DOCTYPE html>
