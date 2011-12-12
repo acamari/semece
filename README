@@ -1,25 +1,10 @@
 To install:
 
-do 
-
-	$ make;
-	# will generate startup.pl and httpd.conf
-
-and 
-
-	$ cat httpd.conf >> /etc/http/httpd.conf;
-
-(or whatever is the site to put your apache configuration in your distribution)
+$ cp Semece.psgi.orig Semece.psgi;
+# edit Semece.psgi following comments
+$ plackup Semece.psgi
 
 -- 
 Perl modules you will need:
 
-PerlIO		(by default).
-Carp		(by default).
-CGI		(by default).
-File::Find	(by default)
-
-Apache::Constants 
-Apache::Request (depends on libapreq)
-Text::Markdown 
-MIME::Types
+HTTP::Status, from HTTP::Message bundle
