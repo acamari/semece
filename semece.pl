@@ -177,36 +177,3 @@ sub bmenu {
 };
 
 app->start();
-__DATA__
-
-@@ index.html.ep
-% layout 'blag';
-% title 'Artículos';
-<h1>Listado de artículos</h1>
-
-
-@@ post.html.ep
-% use Text::Markdown 'markdown';
-% layout 'blag';
-% title 'Post';
-%== markdown($unformatted);
-
-@@ plain.text.ep
-%== $unformatted;
-
-@@ layouts/blag.html.ep
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title || 'Blag'%></title>
-    <!-- <link rel="stylesheet" href="/css/style.css"> -->
-  </head>
-  <body>
-    <%= content %>
-    <nav>
-    %= memorize begin
-      %== menu();
-    % end
-    </nav>
-  </body>
-</html>  

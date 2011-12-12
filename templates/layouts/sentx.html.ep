@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title || 'SeNTX' %></title>
+    <link rel="stylesheet" href="/css/semece.css">
+    <script src="/js/Hyphenator.js">
+    </script>
+    <script>
+      Hyphenator.run();
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="banner">
+        <h1>#SeNTX</h1>
+      </div>
+      <div id="menu">
+        <%= content_for 'menu' %>
+      </div>
+      <div id="content" class="hyphenate">
+        <%= content %>
+      </div>
+    </div>
+  </body>
+</html>
