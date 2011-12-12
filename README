@@ -8,3 +8,4 @@ $ plackup Semece.psgi
 Perl modules you will need:
 
 HTTP::Status, from HTTP::Message bundle
+Plack>=0.9956
