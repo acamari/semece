@@ -1,10 +1,9 @@
-To install:
+To run:
 
-$ cp Semece.psgi.orig Semece.psgi;
-# edit Semece.psgi following comments
-$ plackup Semece.psgi
+$ morbo semece.pl
 
 -- 
 Perl modules you will need:
 
-HTTP::Status, from HTTP::Message bundle
+Mojolicious
+Text::Markdown
