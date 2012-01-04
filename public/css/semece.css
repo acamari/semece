@@ -17,6 +17,11 @@ body {
 	padding: 2px; 
 }
 
+a, a:visited {
+	color: white;
+	text-decoration: none;
+}
+
 #content {
 	float: left;
 	top: 100px;
@@ -55,22 +60,22 @@ body {
 	font-size: .7em;
 }
 
-a {
+#content a {
 	text-decoration: none;
 	color: #EEE;
 	font-weight: bold;
 }
 
-a:visited {
+#content a:visited {
 	text-decoration: cross;
 	color: cyan;
 }
 
-a:link {
+#content a:link {
 	  font-weight: bold;
 }
 
-a:hover {
+#content a:hover {
 	text-decoration: underline;
 }
 

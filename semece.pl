@@ -20,7 +20,7 @@ use Mojolicious::Lite;
 use utf8;
 
 use constant {
-	POSTS => '/var/www/posts'
+	POSTS => '/var/www/sentx/postd'
 };
 
 # Fix this, obviously.
@@ -38,22 +38,25 @@ get '/' => sub {
 
 	$files = ls($path, 1);
 
+	$self->content_for('menu', $files);
 	$self->render(
 	    template	=> 'index',
-	    files	=> $files
 	    );
 } => 'index';
 
 get '/(*rpath)' => sub {
 	my $self	= shift;
 	my $path	= $self->param('rpath');
-	my $raw		= 1; # Do not format the mkd
+	my $raw		= 0; # Format the mkd
 	my $fh;
 
 	$path = POSTS . "/$path";
 
-	unless ($path =~ /\.mkd$/) {
-		$raw = 0;
+	if ($path =~ /\.mkd$/) {
+		$raw = 1;
+	} elsif ($path =~ m|/$|) {
+		$path .= 'index.mkd';
+	} else {
 		$path .= ".mkd";
 	}
 
@@ -144,6 +147,7 @@ helper menu => sub {
 
 	return bmenu(ls($path, 1));
 };
+
 # Build menu in nested ul's
 sub bmenu {
 	my $t		= shift;
@@ -152,24 +156,31 @@ sub bmenu {
 
 	$prev |= '';
 
+	unless ($prev) {
+		$ul .= '<li><a href="/">/</a><li>';
+	}
+
 	while (my ($file, $type) = each %$t) {
 		app->log->debug("building $file");
 		my $rpath = "$prev/$file";
 
 		if (ref $type eq 'HASH' && -f POSTS . "$rpath/index.mkd") {
-			$ul .= "<li><a href=\"$rpath\">$file</a>/\n";
+			# Directory with index file
+			$ul .= "<li><a href=\"$rpath/\">$file</a>/\n";
 			$ul .= bmenu($type, $rpath);
 			$ul .= "</li>\n";
 		} elsif (ref $type eq 'HASH') {
+			# Directory with out an index file
 			$ul .= "<li>$file/\n";
 			$ul .= bmenu($type, $rpath);
 			$ul .= "</li>\n";
 		} else {
+			# Normal post
 			next unless $file =~ s/\.mkd$//;
+			next if $file eq 'index';
 
 			$ul .= "<li><a href=\"$prev/$file\">";
 			$ul .= "$file</a></li>";
-
 		}
 	}
 	
