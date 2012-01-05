@@ -54,9 +54,8 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 		file	=> []	  # changed files
 	};
 
-	if ((($commit->{hash}) = /$git_cr/) == 0) {
-		die "$prog: does not look like a commit message, stopped";
-	}
+	die "$prog: does not look like a commit message, stopped"
+	    unless ($commit->{hash}) = /$git_cr/;
 
 	while (<>) { # iterate headers, ignores non Author or Date headers
 		last if /^$/;
