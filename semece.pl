@@ -19,6 +19,8 @@ use Mojolicious::Lite;
 
 use utf8;
 
+use File::Basename;
+
 use constant {
 	POSTS => '/var/www/sentx/postd'
 };
@@ -117,24 +119,6 @@ sub ls {
 	closedir $dh or die "Couldn't closedir()!, $!; stopped";
 
 	return $t;
-}
-
-sub dirname {
-	my $path	= shift;
-
-	my $dirname;
-
-	return unless $path;
-	if ($path =~ s!/+[^/]+$!!) {
-		$dirname = $path;
-	} elsif ($path =~ s!/+$!!) {
-		$dirname = $path;
-	} else {
-		$dirname = undef;
-	}
-
-	return unless $dirname;
-	return $dirname;
 }
 
 helper menu => sub {
