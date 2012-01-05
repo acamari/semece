@@ -17,6 +17,11 @@ body {
 	padding: 2px; 
 }
 
+a, a:visited {
+	color: white;
+	text-decoration: none;
+}
+
 #content {
 	float: left;
 	top: 100px;
@@ -55,58 +60,27 @@ body {
 	font-size: .7em;
 }
 
-div#lista {
-	float: right;
-	width: 60px; 
-		/* border-left: 1px dotted #ccc; */
-	padding: 5px 0 0 10px; 
-	margin: 10px 0 10px 15px;
-		text-decoration: none; 
-}
-
-div#lista li {
-	list-style-type: none;
-
-} 
-
-div#lista li a {
-	text-decoration: none;
-	padding: 7px 10px;
-}
-
-div#lista li a:link {
-	color: #EEE;
-}
-
-div#lista li a:visited {
-	text-decoration: cross;
-}
-
-div#lista li a:hover {
-	text-decoration: underline;
-}
-
-a {
+#content a {
 	text-decoration: none;
 	color: #EEE;
 	font-weight: bold;
 }
 
-a:visited {
+#content a:visited {
 	text-decoration: cross;
 	color: cyan;
 }
 
-a:link {
+#content a:link {
 	  font-weight: bold;
 }
 
-a:hover {
+#content a:hover {
 	text-decoration: underline;
 }
 
 /*aqui empieza el css del menu*/
-div#menu {
+#menu {
 	top: 100px;
 	float: left;
 	width: 200px;
@@ -114,7 +88,7 @@ div#menu {
 	text-align: left;
 }
 
-div#menu ul {
+#menu ul {
 	margin: 0px;
 	margin-left: 15px;
 	padding: 0px;
@@ -123,33 +97,27 @@ div#menu ul {
 	*/
 }
 
-div#menu li {
+#menu li {
 	list-style-type: none; 
 	list-style-position: inside; 
 	margin: 0px;
 	padding: 0px;
-	
-	/*
-	display: inline;
-	*/
 	text-indent: -10px;
 }
 
-div#menu li a {
+#menu a {
 	text-decoration: none;
-	/* padding: 7px 10px; */
 }
 
 
-div#menu li a:visited {
+#menu a:visited {
 	text-decoration: cross;
 	color: #EEE;
 }
 
-div#menu li a:hover {
+#menu a:hover {
 	text-decoration: underline;
 }
-
 /*aqui acaba el css del menu*/
 
 .tiny {
@@ -163,3 +131,36 @@ div#menu li a:hover {
 code{
 	color: #00FF00;
 }
+
+/* List page specific CSS */
+#lista {
+	float: right;
+	width: 60px; 
+		/* border-left: 1px dotted #ccc; */
+	padding: 5px 0 0 10px; 
+	margin: 10px 0 10px 15px;
+		text-decoration: none; 
+}
+
+#lista li {
+	list-style-type: none;
+
+} 
+
+#lista a {
+	text-decoration: none;
+	padding: 7px 10px;
+}
+
+#lista a:link {
+	color: #EEE;
+}
+
+#lista a:visited {
+	text-decoration: cross;
+}
+
+#lista a:hover {
+	text-decoration: underline;
+}
+
