@@ -1,22 +1,40 @@
 #!/usr/bin/env perl
+#
+# Copyright (c) 2011 Abel Abraham Camarillo Ojeda <acamari@verlet.org>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
 
-#Usage:
-# git log --name-only --date=short | gilog2mkd.pl
+# formats git-log output into a nice markdown text
+# Usage:
+# git log --name-only --date=iso | gitlog2mkd.pl
 
 use strict;
 use warnings;
 
+use File::Basename;
+
 use constant DEBUG	=> 1;
-use constant MAXCOMMIT	=> 10;
-# Length of the nit hash in characters
+use constant MAXCOMMIT	=> 999999;
+# Length of the git hash in characters
 use constant GITSHALEN	=> 40;
 
-my $progn	= $0; # Current program name
+my $prog	= basename($0); # Current program name
 my $hdr		= "#Noticias:\n";
-my $git_cr	= undef; # Git commit regex, if a line matches this regex then
-			 # it's the start of a commit message
+my $git_cr;	# Git commit regex, if a line matches this regex then it's the
+		# start of a commit message
 my $i		= 0; # Commit counter
-my $tmp		= undef;
+my $tmp;
 
 $tmp = sprintf('^commit ([[:digit:]abcdef]{%s})$', GITSHALEN);
 $git_cr = qr/$tmp/o;
@@ -29,60 +47,51 @@ $_ = <>; # Reads first line
 for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 	my $commit = {
 		hash	=> undef, # Commit hash
-		authn	=> undef, # Author name
-		authm	=> undef, # Author mail
+		authn	=> "herp", # Author name
+		authm	=> "derp", # Author mail
 		date	=> undef, # Commit date
 		msg	=> undef, # Commit message
-		file	=> undef  # First changed file
+		file	=> []	  # changed files
 	};
 
-	if (not scalar(($commit->{hash}) = /$git_cr/)) {
-		die sprintf("This doesn't look like a commit message!, ".
-		            "stopped at %s line %s; reading %s line %s.\n",
-			    $progn, __LINE__, $ARGV, $.);
-	} elsif (not scalar(($commit->{authn}, $commit->{authm}) 
-			    = <> =~ /^Author:\s+([^<]+)<([^>]*)>$/)) {
-		die sprintf("This doesn't look like an 'Author:' line!, ".
-		            "stopped at %s line %s; reading %s line %s.\n",
-			    $progn, __LINE__, $ARGV, $.);
-	} elsif (not scalar(($commit->{date}) = <> =~ /^Date:\s+(.+)$/)) {
-		die sprintf("This doesn't look like a 'Date:' line!, ".
-		            "stopped at %s line %s; reading %s line %s.\n",
-			    $progn, __LINE__, $ARGV, $.);
+	if ((($commit->{hash}) = /$git_cr/) == 0) {
+		die "$prog: does not look like a commit message, stopped";
 	}
 
-	# Iterating over a single commit
-	while (<>) {
+	while (<>) { # iterate headers, ignores non Author or Date headers
+		last if /^$/;
+		DEBUG && warn "\$_: $_";
+		@{$commit}{qw(authn authm)} = ($1, $2) if /^Author:\s+([^<]+)\s+<([^>]*)>$/;
+		$commit->{date} = $1 if /^Date:\s+(.+)$/;
+	}
+	die "$prog: no 'Date:' header, stopped" unless $commit->{date};
+	die "$prog: no 'Author:' header, stopped" unless $commit->{authn};
+
+	while (<>) { # iterate commit msg and commit files
 		last if /$git_cr/;
-		if(/^\s+/){
+		next if /^$/; # empty line
+		if (/^\s+/) { # in git log --name-only commit messages are
+				# indented, this marks a commit message start
 			$commit->{msg} .= $_;
-		}elsif(!$commit->{file} && /^\w/){
+		} else {
 			chomp;
-			$commit->{file} = $_;
+			push @{$commit->{file}}, $_;
 		}
 	}
 
-	if (not $commit->{msg}) {
-		die sprintf("Empty commit msg!, ".
-		            "stopped at %s line %s; reading %s line %s.\n",
-			    $progn, __LINE__, $ARGV, $.);
-	}
+	die "$prog: empty commit msg" if not $commit->{msg};
 
-	# Prunes empty lines at the start and end of $msg
-	$commit->{msg} =~ s/^\n+//s;
-	$commit->{msg} =~ s/\n+$//s;
-
-	printf(STDERR "\$commit = {\n") if DEBUG;
+	DEBUG && warn "\$commit = {\n";
 	for (qw(hash	
 		authn
 		authm
 		date
 		msg
 		file)) {
-		printf(STDERR "\t%s: '%s'\n", 
-		       $_, ($commit->{$_} ? $commit->{$_} : "")) if DEBUG;
+		DEBUG && warn sprintf("\t%s: '%s'\n", 
+		       $_, ($commit->{$_} ? $commit->{$_} : ""));
 	}
-	printf(STDERR "};\n") if DEBUG;
+	DEBUG && warn "};\n";
 
 	print <<MARKDOWN;
 * ###$commit->{date}: 
@@ -90,8 +99,8 @@ for ($i = 0; $i < MAXCOMMIT && !eof; $i++) {
 $commit->{msg} 
 MARKDOWN
 
-	print <<MARKDOWN if $commit->{file};
-  [Ir.]($commit->{file})
+	print <<MARKDOWN for @{$commit->{file}};
+  [Ir.]($_)
 MARKDOWN
 
 }
